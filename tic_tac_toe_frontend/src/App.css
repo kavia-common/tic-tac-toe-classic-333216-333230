@@ -92,6 +92,28 @@
   font-size: 14px;
 }
 
+/* Colorful tagline treatment (modern + readable) */
+.subtitle--colorful {
+  /* Use gradient text but keep it subtle enough for readability */
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 1) 0%,
+    rgba(6, 182, 212, 1) 38%,
+    rgba(139, 92, 246, 1) 72%,
+    rgba(236, 72, 153, 1) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+
+  /* Slight emphasis without overpowering the title */
+  font-weight: 600;
+  letter-spacing: -0.01em;
+
+  /* Gentle glow for contrast on light surfaces */
+  text-shadow: 0 10px 22px rgba(59, 130, 246, 0.10);
+}
+
 .status {
   display: inline-flex;
   align-items: center;

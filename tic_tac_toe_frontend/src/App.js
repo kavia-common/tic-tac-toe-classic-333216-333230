@@ -66,7 +66,9 @@ function App() {
         <header className="header">
           <div>
             <h1 className="title">Tic‑Tac‑Toe</h1>
-            <p className="subtitle">Classic 3×3 — two players, one device.</p>
+            <p className="subtitle subtitle--colorful">
+              Classic 3×3 — two players, one device.
+            </p>
           </div>
 
           <div className="status" role="status" aria-live="polite">
