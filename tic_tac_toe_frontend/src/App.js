@@ -177,6 +177,13 @@ function App() {
                 Spoorthy
               </span>
             ) : null}
+
+            {/* UI-only requirement: show "Disha" only when O is the winner. */}
+            {analysis.winner === PLAYER_O ? (
+              <span className="disha" aria-label="Disha">
+                Disha
+              </span>
+            ) : null}
           </div>
         </header>
 

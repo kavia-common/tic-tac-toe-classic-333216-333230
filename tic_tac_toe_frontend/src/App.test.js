@@ -1,16 +1,18 @@
 import { render, screen, fireEvent } from "@testing-library/react";
 import App from "./App";
 
-test("renders Tic-Tac-Toe title and initial status (Spoorthy hidden)", () => {
+test("renders Tic-Tac-Toe title and initial status (Spoorthy/Disha hidden)", () => {
   render(<App />);
   expect(screen.getByText(/tic‑?tac‑?toe/i)).toBeInTheDocument();
   expect(screen.getByRole("status")).toHaveTextContent(/next player:\s*x/i);
 
   // Only visible when X wins
   expect(screen.queryByText(/spoorthy/i)).not.toBeInTheDocument();
+  // Only visible when O wins
+  expect(screen.queryByText(/disha/i)).not.toBeInTheDocument();
 });
 
-test("allows playing moves and alternates turns (Spoorthy still hidden)", () => {
+test("allows playing moves and alternates turns (Spoorthy/Disha still hidden)", () => {
   render(<App />);
 
   const cells = screen.getAllByRole("gridcell");
@@ -23,9 +25,10 @@ test("allows playing moves and alternates turns (Spoorthy still hidden)", () => 
   expect(screen.getByRole("status")).toHaveTextContent(/next player:\s*x/i);
 
   expect(screen.queryByText(/spoorthy/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/disha/i)).not.toBeInTheDocument();
 });
 
-test("restart clears the board (Spoorthy hidden)", () => {
+test("restart clears the board (Spoorthy/Disha hidden)", () => {
   render(<App />);
 
   const cells = screen.getAllByRole("gridcell");
@@ -39,9 +42,10 @@ test("restart clears the board (Spoorthy hidden)", () => {
   expect(screen.getByRole("status")).toHaveTextContent(/next player:\s*x/i);
 
   expect(screen.queryByText(/spoorthy/i)).not.toBeInTheDocument();
+  expect(screen.queryByText(/disha/i)).not.toBeInTheDocument();
 });
 
-test('when X wins, shows winner status, shows "Spoorthy", and triggers celebration overlay', () => {
+test('when X wins, shows winner status, shows "Spoorthy", hides "Disha", and triggers celebration overlay', () => {
   render(<App />);
 
   const cells = screen.getAllByRole("gridcell");
@@ -55,15 +59,16 @@ test('when X wins, shows winner status, shows "Spoorthy", and triggers celebrati
 
   expect(screen.getByRole("status")).toHaveTextContent(/winner:\s*x/i);
 
-  // New UI requirement
+  // UI requirement
   expect(screen.getByText(/spoorthy/i)).toBeInTheDocument();
+  expect(screen.queryByText(/disha/i)).not.toBeInTheDocument();
 
   // Celebration overlay should mount briefly on win.
   // It's aria-hidden, so query by class via DOM is simplest & stable.
   expect(document.querySelector(".partyLayer")).toBeTruthy();
 });
 
-test('when O wins, does NOT show "Spoorthy"', () => {
+test('when O wins, shows "Disha" and does NOT show "Spoorthy"', () => {
   render(<App />);
 
   const cells = screen.getAllByRole("gridcell");
@@ -79,4 +84,5 @@ test('when O wins, does NOT show "Spoorthy"', () => {
 
   expect(screen.getByRole("status")).toHaveTextContent(/winner:\s*o/i);
   expect(screen.queryByText(/spoorthy/i)).not.toBeInTheDocument();
+  expect(screen.getByText(/disha/i)).toBeInTheDocument();
 });
