@@ -19,6 +19,15 @@
   --pink: #ec4899;
   --lime: #22c55e;
 
+  /* Text accents (keep contrast/readability high on light surfaces) */
+  --text-strong: rgba(2, 6, 23, 0.96);
+  --text-accent: rgba(59, 130, 246, 0.96);   /* primary-leaning */
+  --text-info: rgba(6, 182, 212, 0.96);      /* success/cyan */
+  --text-warn: rgba(245, 158, 11, 0.96);     /* warning/amber */
+  --text-danger: rgba(239, 68, 68, 0.96);    /* danger/red */
+  --text-violet: rgba(139, 92, 246, 0.98);   /* secondary/violet */
+  --text-pink: rgba(236, 72, 153, 0.98);     /* pink */
+
   --border: rgba(15, 23, 42, 0.10);
   --border-strong: rgba(15, 23, 42, 0.14);
 
@@ -91,8 +100,19 @@
 
 .subtitle {
   margin: 6px 0 0;
-  color: var(--muted);
   font-size: 14px;
+
+  /* Subtle, readable color (keeps the "muted" vibe but adds life) */
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.92),
+    rgba(6, 182, 212, 0.86),
+    rgba(139, 92, 246, 0.86),
+    rgba(15, 23, 42, 0.66)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* Colorful tagline treatment (modern + readable)
@@ -143,8 +163,8 @@
   font-weight: 900;
   letter-spacing: -0.01em;
 
-  /* Higher-contrast default status text (solid, not clipped) */
-  color: rgba(15, 23, 42, 0.94);
+  /* Default status stays dark for maximum contrast */
+  color: var(--text-strong);
   text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
 
   /* Keep the modern colorful vibe via subtle edge tint + top sheen */
@@ -378,7 +398,17 @@
 .hint {
   margin: 0;
   font-size: 13px;
-  color: var(--muted);
+
+  /* Subtle color to avoid feeling "disabled"/gray while staying readable */
+  background: linear-gradient(
+    90deg,
+    rgba(15, 23, 42, 0.70),
+    rgba(59, 130, 246, 0.86),
+    rgba(6, 182, 212, 0.84)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 /* -----------------------------

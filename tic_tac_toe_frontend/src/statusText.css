@@ -1,0 +1,43 @@
+/* Status text emphasis helpers.
+   Kept separate so the main App.css remains focused on layout/surfaces. */
+
+.statusText {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  position: relative;
+  z-index: 1; /* ensure above the .status::before sheen */
+}
+
+.statusText__label {
+  color: rgba(15, 23, 42, 0.80);
+}
+
+.statusText__value {
+  font-weight: 950;
+  letter-spacing: -0.02em;
+}
+
+.statusText__value--winner {
+  color: var(--text-warn);
+  text-shadow: 0 10px 22px rgba(245, 158, 11, 0.10);
+}
+
+.statusText__value--draw {
+  color: var(--text-pink);
+  text-shadow: 0 10px 22px rgba(236, 72, 153, 0.10);
+}
+
+.statusText__value--next {
+  color: var(--text-accent);
+  text-shadow: 0 10px 22px rgba(59, 130, 246, 0.10);
+}
+
+/* Extra pop for player marks inside the status line */
+.statusText__player--X {
+  color: var(--text-violet);
+}
+
+.statusText__player--O {
+  color: var(--text-info);
+}

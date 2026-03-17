@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
+import "./statusText.css";
 
 const PLAYER_X = "X";
 const PLAYER_O = "O";
@@ -70,9 +71,9 @@ function App() {
   const nextPlayer = xIsNext ? PLAYER_X : PLAYER_O;
 
   const statusText = useMemo(() => {
-    if (analysis.winner) return `Winner: ${analysis.winner}`;
-    if (analysis.isDraw) return "Draw game";
-    return `Next player: ${nextPlayer}`;
+    if (analysis.winner) return { kind: "winner", player: analysis.winner };
+    if (analysis.isDraw) return { kind: "draw" };
+    return { kind: "next", player: nextPlayer };
   }, [analysis.winner, analysis.isDraw, nextPlayer]);
 
   // Trigger celebration exactly when the game transitions into a win state.
@@ -134,7 +135,7 @@ function App() {
             role="status"
             aria-live="polite"
           >
-            {statusText}
+            <StatusText status={statusText} />
           </div>
         </header>
 
@@ -188,6 +189,47 @@ function analyzeBoard(board) {
 
   const isDraw = board.every((cell) => cell != null);
   return { winner: null, winningLine: null, isDraw };
+}
+
+// PUBLIC_INTERFACE
+function StatusText({ status }) {
+  /** Presentational helper for the status pill.
+   * Keeps the status container readable (dark baseline text) while making key
+   * parts colorful (winner/draw/next + player letter).
+   */
+  if (status.kind === "winner") {
+    return (
+      <span className="statusText">
+        <span className="statusText__label">Winner:</span>
+        <span className="statusText__value statusText__value--winner">
+          <span className={`statusText__player--${status.player}`}>
+            {status.player}
+          </span>
+        </span>
+      </span>
+    );
+  }
+
+  if (status.kind === "draw") {
+    return (
+      <span className="statusText">
+        <span className="statusText__value statusText__value--draw">
+          Draw game
+        </span>
+      </span>
+    );
+  }
+
+  return (
+    <span className="statusText">
+      <span className="statusText__label">Next player:</span>
+      <span className="statusText__value statusText__value--next">
+        <span className={`statusText__player--${status.player}`}>
+          {status.player}
+        </span>
+      </span>
+    </span>
+  );
 }
 
 // PUBLIC_INTERFACE
