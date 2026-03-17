@@ -134,43 +134,54 @@
   padding: 10px 12px;
   border-radius: var(--radius-md);
   border: 1px solid var(--border);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.96),
+    rgba(248, 250, 252, 0.92)
+  );
   box-shadow: var(--shadow-soft);
-  font-weight: 800;
+  font-weight: 900;
   letter-spacing: -0.01em;
-  /* Colorful text (keeps contrast due to gradient + clipping) */
-  background-image:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(248, 250, 252, 0.92)),
-    linear-gradient(90deg, rgba(59, 130, 246, 1), rgba(6, 182, 212, 1), rgba(139, 92, 246, 1));
-  background-origin: border-box;
-  background-clip: padding-box, text;
-  -webkit-background-clip: padding-box, text;
-  color: transparent;
 
-  /* Colorful top highlight */
+  /* Higher-contrast default status text (solid, not clipped) */
+  color: rgba(15, 23, 42, 0.94);
+  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.55);
+
+  /* Keep the modern colorful vibe via subtle edge tint + top sheen */
   position: relative;
   overflow: hidden;
 }
 
+/* Colorful top highlight (decorative only; text remains dark) */
 .status::before {
   content: "";
   position: absolute;
   inset: 0;
   pointer-events: none;
-  background:
-    linear-gradient(90deg,
-      rgba(59, 130, 246, 0.12),
-      rgba(6, 182, 212, 0.10),
-      rgba(139, 92, 246, 0.10),
-      rgba(236, 72, 153, 0.08)
-    );
-  opacity: 0.7;
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 0.14),
+    rgba(6, 182, 212, 0.12),
+    rgba(139, 92, 246, 0.12),
+    rgba(236, 72, 153, 0.10)
+  );
+  opacity: 0.65;
   mask: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
 }
 
+/* Winner styling: darker, higher-contrast, still colorful via border/glow */
 .status--win {
   animation: statusPartyPulse 700ms ease-out 0ms 2;
+  color: rgba(2, 6, 23, 0.98);
+  border-color: rgba(15, 23, 42, 0.22);
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(241, 245, 249, 0.94)
+  );
+  box-shadow:
+    0 18px 44px rgba(15, 23, 42, 0.12),
+    0 14px 30px rgba(245, 158, 11, 0.10);
 }
 
 @keyframes statusPartyPulse {
