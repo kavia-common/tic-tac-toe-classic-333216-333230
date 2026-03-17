@@ -73,6 +73,82 @@
   z-index: 1;
 }
 
+/* -----------------------------
+   Sticker emoji decorations
+   ----------------------------- */
+
+.shell--withStickers {
+  /* Ensure stickers (absolute) can hang slightly outside the shell without clipping */
+  overflow: visible;
+}
+
+.stickers {
+  position: absolute;
+  inset: 0;
+  pointer-events: none; /* never block gameplay */
+  z-index: 2; /* above shell surface, below focus outlines */
+}
+
+/* "Sticker" look: subtle border, paper-like gradient, and shadow */
+.sticker {
+  position: absolute;
+  display: grid;
+  place-items: center;
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.82));
+  box-shadow:
+    0 14px 34px rgba(15, 23, 42, 0.10),
+    0 3px 0 rgba(255, 255, 255, 0.70) inset;
+  font-size: 20px;
+  transform: rotate(var(--rot, -6deg));
+  filter: saturate(1.05) contrast(1.04);
+  user-select: none;
+}
+
+.sticker--sparkle { --rot: -7deg; }
+.sticker--bolt { --rot: 8deg; }
+.sticker--game { --rot: -10deg; }
+.sticker--star { --rot: 9deg; }
+.sticker--brain { --rot: -6deg; }
+.sticker--trophy { --rot: 6deg; }
+
+/* Small pill cluster near the title (also decorative) */
+.titleRow {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.stickerPill {
+  pointer-events: none;
+  user-select: none;
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(15, 23, 42, 0.12);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.84));
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.08);
+  transform: rotate(-2deg);
+}
+
+.stickerPill__emoji {
+  line-height: 1;
+  font-size: 16px;
+}
+
+/* Ensure the board remains the interaction priority */
+.boardCard--withStickers {
+  position: relative;
+  z-index: 1;
+}
+
 .header {
   display: grid;
   gap: 14px;
@@ -493,5 +569,21 @@
 
   .mark {
     font-size: 34px;
+  }
+
+  .sticker {
+    width: 36px;
+    height: 36px;
+    border-radius: 12px;
+    font-size: 18px;
+  }
+
+  .stickerPill {
+    padding: 7px 9px;
+    gap: 5px;
+  }
+
+  .stickerPill__emoji {
+    font-size: 15px;
   }
 }

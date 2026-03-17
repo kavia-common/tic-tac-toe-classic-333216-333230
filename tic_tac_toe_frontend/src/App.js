@@ -118,16 +118,50 @@ function App() {
       {/* Confetti overlay is purely decorative; keep it hidden from assistive tech. */}
       <PartyPopper active={showWinOverlay} />
 
-      <main className="shell" aria-label="Tic-Tac-Toe">
+      <main className="shell shell--withStickers" aria-label="Tic-Tac-Toe">
+        {/* Decorative stickers (purely presentational). */}
+        <div className="stickers" aria-hidden="true">
+          {/* Header stickers */}
+          <span className="sticker sticker--sparkle" style={{ top: 14, left: 14 }}>
+            ✨
+          </span>
+          <span className="sticker sticker--bolt" style={{ top: 18, right: 16 }}>
+            ⚡️
+          </span>
+
+          {/* Board-adjacent stickers */}
+          <span className="sticker sticker--game" style={{ top: 196, left: -10 }}>
+            🎮
+          </span>
+          <span className="sticker sticker--star" style={{ top: 248, right: -14 }}>
+            ⭐️
+          </span>
+          <span className="sticker sticker--brain" style={{ bottom: 92, left: 12 }}>
+            🧠
+          </span>
+          <span className="sticker sticker--trophy" style={{ bottom: 14, right: 18 }}>
+            🏆
+          </span>
+        </div>
+
         <header className="header">
-          <div>
-            <h1 className="title">Tic‑Tac‑Toe</h1>
-            <p
-              className="subtitle subtitle--colorful"
-              aria-label="Classic 3×3 — two players, one device."
-            >
-              <ColorfulTagline text="Classic 3×3 — two players, one device." />
-            </p>
+          <div className="titleRow">
+            <div>
+              <h1 className="title">Tic‑Tac‑Toe</h1>
+              <p
+                className="subtitle subtitle--colorful"
+                aria-label="Classic 3×3 — two players, one device."
+              >
+                <ColorfulTagline text="Classic 3×3 — two players, one device." />
+              </p>
+            </div>
+
+            {/* Small inline sticker cluster near the title */}
+            <span className="stickerPill" aria-hidden="true">
+              <span className="stickerPill__emoji">😄</span>
+              <span className="stickerPill__emoji">🟦</span>
+              <span className="stickerPill__emoji">🟩</span>
+            </span>
           </div>
 
           <div
@@ -139,7 +173,7 @@ function App() {
           </div>
         </header>
 
-        <section className="boardCard" aria-label="Game board">
+        <section className="boardCard boardCard--withStickers" aria-label="Game board">
           <div className="board" role="grid" aria-label="3 by 3 board">
             {board.map((value, idx) => {
               const isWinningCell = analysis.winningLine?.includes(idx) ?? false;
