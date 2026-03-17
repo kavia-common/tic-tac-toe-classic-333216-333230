@@ -33,3 +33,22 @@ test("restart clears the board", () => {
   screen.getAllByRole("gridcell").forEach((c) => expect(c).toHaveTextContent(""));
   expect(screen.getByRole("status")).toHaveTextContent(/next player:\s*x/i);
 });
+
+test("winning shows winner status and triggers celebration overlay", () => {
+  render(<App />);
+
+  const cells = screen.getAllByRole("gridcell");
+
+  // X wins across the top row: 0,1,2
+  fireEvent.click(cells[0]); // X
+  fireEvent.click(cells[3]); // O
+  fireEvent.click(cells[1]); // X
+  fireEvent.click(cells[4]); // O
+  fireEvent.click(cells[2]); // X wins
+
+  expect(screen.getByRole("status")).toHaveTextContent(/winner:\s*x/i);
+
+  // Celebration overlay should mount briefly on win.
+  // It's aria-hidden, so query by class via DOM is simplest & stable.
+  expect(document.querySelector(".partyLayer")).toBeTruthy();
+});

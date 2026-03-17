@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import "./App.css";
 
 const PLAYER_X = "X";
@@ -9,6 +9,19 @@ const PLAYER_O = "O";
  * Keep colors aligned with existing theme accents for a cohesive look.
  */
 const TAGLINE_PALETTE = [
+  "var(--primary)",
+  "var(--success)",
+  "var(--secondary)",
+  "var(--pink)",
+  "var(--warning)",
+  "var(--lime)",
+];
+
+/**
+ * Confetti colors aligned to app theme.
+ * (Avoids importing an external confetti library to keep the template lightweight.)
+ */
+const CONFETTI_COLORS = [
   "var(--primary)",
   "var(--success)",
   "var(--secondary)",
@@ -45,6 +58,14 @@ function App() {
   /** Whether next move is X; false means O. */
   const [xIsNext, setXIsNext] = useState(true);
 
+  /**
+   * UI-only celebration flag:
+   * - turns on when a winner first appears
+   * - auto-hides after a short duration
+   * - is cleared on restart
+   */
+  const [celebrating, setCelebrating] = useState(false);
+
   const analysis = useMemo(() => analyzeBoard(board), [board]);
   const nextPlayer = xIsNext ? PLAYER_X : PLAYER_O;
 
@@ -53,6 +74,21 @@ function App() {
     if (analysis.isDraw) return "Draw game";
     return `Next player: ${nextPlayer}`;
   }, [analysis.winner, analysis.isDraw, nextPlayer]);
+
+  // Trigger celebration exactly when the game transitions into a win state.
+  useEffect(() => {
+    if (!analysis.winner) {
+      // If the board changes back to "no winner" (e.g., restart), clear any lingering state.
+      setCelebrating(false);
+      return;
+    }
+
+    setCelebrating(true);
+
+    // Auto-hide confetti after a moment; the status text + winning highlights remain.
+    const t = window.setTimeout(() => setCelebrating(false), 2200);
+    return () => window.clearTimeout(t);
+  }, [analysis.winner]);
 
   // PUBLIC_INTERFACE
   const handleCellClick = (index) => {
@@ -71,20 +107,33 @@ function App() {
   const restartGame = () => {
     setBoard(Array(9).fill(null));
     setXIsNext(true);
+    setCelebrating(false);
   };
+
+  const showWinOverlay = Boolean(analysis.winner) && celebrating;
 
   return (
     <div className="app">
+      {/* Confetti overlay is purely decorative; keep it hidden from assistive tech. */}
+      <PartyPopper active={showWinOverlay} />
+
       <main className="shell" aria-label="Tic-Tac-Toe">
         <header className="header">
           <div>
             <h1 className="title">Tic‑Tac‑Toe</h1>
-            <p className="subtitle subtitle--colorful" aria-label="Classic 3×3 — two players, one device.">
+            <p
+              className="subtitle subtitle--colorful"
+              aria-label="Classic 3×3 — two players, one device."
+            >
               <ColorfulTagline text="Classic 3×3 — two players, one device." />
             </p>
           </div>
 
-          <div className="status" role="status" aria-live="polite">
+          <div
+            className={`status ${analysis.winner ? "status--win" : ""}`}
+            role="status"
+            aria-live="polite"
+          >
             {statusText}
           </div>
         </header>
@@ -116,9 +165,7 @@ function App() {
             Restart
           </button>
 
-          <p className="hint">
-            Tip: Click an empty square to place your mark.
-          </p>
+          <p className="hint">Tip: Click an empty square to place your mark.</p>
         </footer>
       </main>
     </div>
@@ -177,6 +224,76 @@ function ColorfulTagline({ text }) {
       })}
     </span>
   );
+}
+
+/**
+ * Party/confetti overlay component.
+ * Uses CSS animations and a deterministic set of "confetti pieces" so tests and UI are stable.
+ */
+// PUBLIC_INTERFACE
+function PartyPopper({ active }) {
+  /**
+   * Create a deterministic set of confetti pieces:
+   * - Each piece is positioned across the viewport
+   * - Each has a varied size/rotation/delay for a lively feel
+   */
+  const pieces = useMemo(() => createConfettiPieces(34), []);
+
+  if (!active) return null;
+
+  return (
+    <div className="partyLayer" aria-hidden="true">
+      <div className="partyLayer__veil" />
+      {pieces.map((p) => (
+        <span
+          key={p.id}
+          className="confetti"
+          style={{
+            left: `${p.leftPct}%`,
+            width: `${p.widthPx}px`,
+            height: `${p.heightPx}px`,
+            background: p.color,
+            transform: `rotate(${p.rotateDeg}deg)`,
+            animationDelay: `${p.delayMs}ms`,
+            opacity: p.opacity,
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
+/**
+ * Create stable confetti "pieces" without RNG so the UI is consistent and test-friendly.
+ * @param {number} count
+ * @returns {Array<{id:string,leftPct:number,widthPx:number,heightPx:number,rotateDeg:number,delayMs:number,opacity:number,color:string}>}
+ */
+function createConfettiPieces(count) {
+  const pieces = [];
+  for (let i = 0; i < count; i += 1) {
+    const t = i / Math.max(1, count - 1);
+
+    // Spread across width with a gentle wave to avoid looking too grid-like.
+    const leftPct = Math.round((t * 100 + (i % 4) * 2.2) * 10) / 10;
+
+    const widthPx = 6 + (i % 5); // 6..10
+    const heightPx = 10 + ((i * 3) % 10); // 10..19
+    const rotateDeg = ((i * 47) % 160) - 80; // -80..79
+    const delayMs = (i % 10) * 55; // stagger
+    const opacity = 0.92 - (i % 6) * 0.06;
+
+    pieces.push({
+      id: `c-${i}`,
+      leftPct: Math.min(98, Math.max(2, leftPct)),
+      widthPx,
+      heightPx,
+      rotateDeg,
+      delayMs,
+      opacity: Math.max(0.55, opacity),
+      color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
+    });
+  }
+  return pieces;
 }
 
 export default App;
