@@ -92,26 +92,35 @@
   font-size: 14px;
 }
 
-/* Colorful tagline treatment (modern + readable) */
+/* Colorful tagline treatment (modern + readable)
+   Now uses per-character coloring instead of gradient-clipped text. */
 .subtitle--colorful {
-  /* Use gradient text but keep it subtle enough for readability */
-  background: linear-gradient(
-    90deg,
-    rgba(59, 130, 246, 1) 0%,
-    rgba(6, 182, 212, 1) 38%,
-    rgba(139, 92, 246, 1) 72%,
-    rgba(236, 72, 153, 1) 100%
-  );
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-
-  /* Slight emphasis without overpowering the title */
+  color: var(--muted); /* fallback if spans fail for any reason */
   font-weight: 600;
   letter-spacing: -0.01em;
+  text-shadow: 0 10px 22px rgba(59, 130, 246, 0.08);
+}
 
-  /* Gentle glow for contrast on light surfaces */
-  text-shadow: 0 10px 22px rgba(59, 130, 246, 0.10);
+/* Container for the colored characters */
+.tagline {
+  display: inline;
+  /* Ensure wrapping stays natural and doesn't break the layout on small screens */
+  overflow-wrap: anywhere;
+  word-break: normal;
+  white-space: normal;
+}
+
+/* Individual character styling */
+.tagline__char {
+  display: inline;
+  /* Slightly improve contrast and keep neon-ish colors from looking too harsh */
+  filter: saturate(1.05) contrast(1.05);
+}
+
+/* Keep spaces from collapsing even though they are inside spans */
+.tagline__char--space {
+  white-space: pre;
+  filter: none;
 }
 
 .status {

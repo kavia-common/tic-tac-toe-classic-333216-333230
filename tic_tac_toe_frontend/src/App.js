@@ -5,6 +5,19 @@ const PLAYER_X = "X";
 const PLAYER_O = "O";
 
 /**
+ * Repeating palette for per-character tagline coloring.
+ * Keep colors aligned with existing theme accents for a cohesive look.
+ */
+const TAGLINE_PALETTE = [
+  "var(--primary)",
+  "var(--success)",
+  "var(--secondary)",
+  "var(--pink)",
+  "var(--warning)",
+  "var(--lime)",
+];
+
+/**
  * All possible winning line index triplets for a 3x3 board.
  * Index mapping:
  * 0 1 2
@@ -66,8 +79,8 @@ function App() {
         <header className="header">
           <div>
             <h1 className="title">Tic‑Tac‑Toe</h1>
-            <p className="subtitle subtitle--colorful">
-              Classic 3×3 — two players, one device.
+            <p className="subtitle subtitle--colorful" aria-label="Classic 3×3 — two players, one device.">
+              <ColorfulTagline text="Classic 3×3 — two players, one device." />
             </p>
           </div>
 
@@ -128,6 +141,42 @@ function analyzeBoard(board) {
 
   const isDraw = board.every((cell) => cell != null);
   return { winner: null, winningLine: null, isDraw };
+}
+
+// PUBLIC_INTERFACE
+function ColorfulTagline({ text }) {
+  /**
+   * UI-only rendering helper:
+   * - wraps every character (including spaces/punctuation) in its own span
+   * - uses a repeating palette to assign color
+   * - keeps the original string available to assistive tech via parent aria-label
+   */
+  const palette = TAGLINE_PALETTE;
+
+  let paletteIndex = 0;
+  const chars = Array.from(text);
+
+  return (
+    <span className="tagline" aria-hidden="true">
+      {chars.map((ch, i) => {
+        // Don't advance the palette for whitespace so the coloring feels more intentional.
+        const isWhitespace = /\s/.test(ch);
+        const color = palette[paletteIndex % palette.length];
+
+        if (!isWhitespace) paletteIndex += 1;
+
+        return (
+          <span
+            key={`${i}-${ch}`}
+            className={`tagline__char ${isWhitespace ? "tagline__char--space" : ""}`}
+            style={!isWhitespace ? { color } : undefined}
+          >
+            {ch}
+          </span>
+        );
+      })}
+    </span>
+  );
 }
 
 export default App;
