@@ -28,9 +28,28 @@
   text-shadow: 0 10px 22px rgba(236, 72, 153, 0.10);
 }
 
+/* "Next player" should feel more vibrant than other statuses, but still readable.
+   We do that by using gradient-clipped text (with solid-color fallback). */
 .statusText__value--next {
-  color: var(--text-accent);
-  text-shadow: 0 10px 22px rgba(59, 130, 246, 0.10);
+  /* Fallback color (e.g., if background-clip isn't supported) */
+  color: rgba(37, 99, 235, 0.98); /* strong blue, good contrast on light surface */
+
+  /* Gradient emphasis */
+  background: linear-gradient(
+    90deg,
+    rgba(59, 130, 246, 1) 0%,
+    rgba(6, 182, 212, 1) 35%,
+    rgba(139, 92, 246, 1) 70%,
+    rgba(236, 72, 153, 1) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
+
+  /* Slight glow/lift for perceived contrast without harming readability */
+  text-shadow:
+    0 10px 22px rgba(59, 130, 246, 0.12),
+    0 6px 16px rgba(139, 92, 246, 0.10);
 }
 
 /* Extra pop for player marks inside the status line */
