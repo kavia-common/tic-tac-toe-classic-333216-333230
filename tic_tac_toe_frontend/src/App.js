@@ -1,49 +1,131 @@
-import React, { useState, useEffect } from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useMemo, useState } from "react";
+import "./App.css";
+
+const PLAYER_X = "X";
+const PLAYER_O = "O";
+
+/**
+ * All possible winning line index triplets for a 3x3 board.
+ * Index mapping:
+ * 0 1 2
+ * 3 4 5
+ * 6 7 8
+ */
+const WINNING_LINES = [
+  // Rows
+  [0, 1, 2],
+  [3, 4, 5],
+  [6, 7, 8],
+  // Columns
+  [0, 3, 6],
+  [1, 4, 7],
+  [2, 5, 8],
+  // Diagonals
+  [0, 4, 8],
+  [2, 4, 6],
+];
 
 // PUBLIC_INTERFACE
 function App() {
-  const [theme, setTheme] = useState('light');
+  /** 9 cells, each null | "X" | "O" */
+  const [board, setBoard] = useState(() => Array(9).fill(null));
+  /** Whether next move is X; false means O. */
+  const [xIsNext, setXIsNext] = useState(true);
 
-  // Effect to apply theme to document element
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
+  const analysis = useMemo(() => analyzeBoard(board), [board]);
+  const nextPlayer = xIsNext ? PLAYER_X : PLAYER_O;
+
+  const statusText = useMemo(() => {
+    if (analysis.winner) return `Winner: ${analysis.winner}`;
+    if (analysis.isDraw) return "Draw game";
+    return `Next player: ${nextPlayer}`;
+  }, [analysis.winner, analysis.isDraw, nextPlayer]);
 
   // PUBLIC_INTERFACE
-  const toggleTheme = () => {
-    setTheme(prevTheme => prevTheme === 'light' ? 'dark' : 'light');
+  const handleCellClick = (index) => {
+    // Ignore clicks after game over or on already-filled cells.
+    if (analysis.winner || analysis.isDraw || board[index] != null) return;
+
+    setBoard((prev) => {
+      const next = prev.slice();
+      next[index] = nextPlayer;
+      return next;
+    });
+    setXIsNext((prev) => !prev);
+  };
+
+  // PUBLIC_INTERFACE
+  const restartGame = () => {
+    setBoard(Array(9).fill(null));
+    setXIsNext(true);
   };
 
   return (
-    <div className="App">
-      <header className="App-header">
-        <button 
-          className="theme-toggle" 
-          onClick={toggleTheme}
-          aria-label={`Switch to ${theme === 'light' ? 'dark' : 'light'} mode`}
-        >
-          {theme === 'light' ? '🌙 Dark' : '☀️ Light'}
-        </button>
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <p>
-          Current theme: <strong>{theme}</strong>
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div className="app">
+      <main className="shell" aria-label="Tic-Tac-Toe">
+        <header className="header">
+          <div>
+            <h1 className="title">Tic‑Tac‑Toe</h1>
+            <p className="subtitle">Classic 3×3 — two players, one device.</p>
+          </div>
+
+          <div className="status" role="status" aria-live="polite">
+            {statusText}
+          </div>
+        </header>
+
+        <section className="boardCard" aria-label="Game board">
+          <div className="board" role="grid" aria-label="3 by 3 board">
+            {board.map((value, idx) => {
+              const isWinningCell = analysis.winningLine?.includes(idx) ?? false;
+              return (
+                <button
+                  key={idx}
+                  type="button"
+                  className={`cell ${isWinningCell ? "cell--win" : ""}`}
+                  onClick={() => handleCellClick(idx)}
+                  role="gridcell"
+                  aria-label={`Cell ${idx + 1}${value ? `: ${value}` : ""}`}
+                >
+                  <span className={`mark ${value ? `mark--${value}` : ""}`}>
+                    {value ?? ""}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+        </section>
+
+        <footer className="footer">
+          <button type="button" className="btn" onClick={restartGame}>
+            Restart
+          </button>
+
+          <p className="hint">
+            Tip: Click an empty square to place your mark.
+          </p>
+        </footer>
+      </main>
     </div>
   );
+}
+
+/**
+ * Compute winner/draw state for a board.
+ * @param {(null|"X"|"O")[]} board
+ * @returns {{winner: (null|"X"|"O"), winningLine: (null|number[]), isDraw: boolean}}
+ */
+function analyzeBoard(board) {
+  for (const line of WINNING_LINES) {
+    const [a, b, c] = line;
+    const v = board[a];
+    if (v && v === board[b] && v === board[c]) {
+      return { winner: v, winningLine: line, isDraw: false };
+    }
+  }
+
+  const isDraw = board.every((cell) => cell != null);
+  return { winner: null, winningLine: null, isDraw };
 }
 
 export default App;
