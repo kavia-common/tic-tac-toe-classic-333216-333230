@@ -265,6 +265,23 @@
   mask: linear-gradient(180deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0));
 }
 
+/* UI-only winner addon: "Spoorthy" visible only when X wins. */
+.spoorthy {
+  margin-left: 10px;
+  padding-left: 10px;
+  border-left: 1px solid rgba(15, 23, 42, 0.18);
+
+  font-weight: 950;
+  letter-spacing: -0.02em;
+
+  /* Keep high contrast but use a colorful accent to match the theme */
+  color: var(--text-violet);
+  text-shadow: 0 10px 22px rgba(139, 92, 246, 0.10);
+
+  position: relative;
+  z-index: 1; /* above status::before sheen */
+}
+
 /* Winner styling: darker, higher-contrast, still colorful via border/glow */
 .status--win {
   animation: statusPartyPulse 700ms ease-out 0ms 2;

@@ -170,6 +170,13 @@ function App() {
             aria-live="polite"
           >
             <StatusText status={statusText} />
+
+            {/* UI-only requirement: show "Spoorthy" only when X is the winner. */}
+            {analysis.winner === PLAYER_X ? (
+              <span className="spoorthy" aria-label="Spoorthy">
+                Spoorthy
+              </span>
+            ) : null}
           </div>
         </header>
 
